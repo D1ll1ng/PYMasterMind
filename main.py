@@ -1,50 +1,54 @@
 import random
 
-COLORS = ["R","G","B","Y","W","O"]
+COLORS = ["R", "G", "B", "Y", "W", "O"]
 TRIES = 10
 CODE_LENGTH = 4
 
+
 def generate_code():
-    code = []
+    return random.choices(COLORS, k=CODE_LENGTH)
 
-    for _ in range(CODE_LENGTH);
-        color = random.choice(COLORS)
-        code.append(color)
-    
-    return code
 
-def guess_code():
-
+def get_guess():
     while True:
-        guess = input("guess: ").upper().split(" ")
+        guess = input("Guess: ").upper().split()
 
         if len(guess) != CODE_LENGTH:
             print(f"You must guess {CODE_LENGTH} colors.")
             continue
-        
-        for color in guess:
-            if color not in COLORS:
-                print(f"Invalid color: {color}. Try again.")
 
-        else:
-            break
-    
-    return guess
+        if not all(color in COLORS for color in guess):
+            print("Invalid colors. The valid colors are:", *COLORS)
+            continue
 
-def check_code(guess, real_code):
-    color_count = {}
-    correct_pos = 0
-    incorrect_pos = 0
+        return guess
 
-    for color in real_code:
-        if color not in color_count:
-            color_count[color] = 0
-        color_count[color] += 1
 
-    for guess_color, real_color in zip{guess, real_code}
-        if guess_code == real_color:
-            correct_pos += 1
-            color_count[guess_color] -= 1
+def check_guess(guess, code):
+    correct_pos = sum(guess[i] == code[i] for i in range(CODE_LENGTH))
+    incorrect_pos = sum(guess.count(color) - code.count(color) for color in COLORS)
 
-    for guess_color, real_color in zip{guess, real_code}
-        if guess_color in color_count and color_count[guess_color] > 0: 
+    return correct_pos, incorrect_pos
+
+
+def play_game():
+    print(f"Welcome to Mastermind! You have {TRIES} tries to guess the code.")
+    print("The valid colors are:", *COLORS)
+
+    code = generate_code()
+
+    for attempt in range(1, TRIES + 1):
+        guess = get_guess()
+        correct_pos, incorrect_pos = check_guess(guess, code)
+
+        if correct_pos == CODE_LENGTH:
+            print(f"Congratulations! You guessed the code in {attempt} tries.")
+            return
+
+        print(f"Correct positions: {correct_pos} | Incorrect positions: {incorrect_pos}")
+
+    print("Sorry, you ran out of tries. The code was:", *code)
+
+
+if __name__ == "__main__":
+    play_game()
